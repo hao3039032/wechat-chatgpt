@@ -6,6 +6,7 @@ import {
 } from "openai";
 import DBUtils from "./data.js";
 import fs from "fs";
+import { config } from "./config.js";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -22,9 +23,9 @@ async function chatgpt(username:string,message: string): Promise<string> {
   DBUtils.addUserMessage(username, message);
   const messages = DBUtils.getChatMessage(username);
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: config.model,
     messages: messages,
-    temperature: 0.6
+    temperature: config.temperature
   }).then((res) => res.data).catch((err) => console.log(err));
   if (response) {
     return (response.choices[0].message as any).content.replace(/^\n+|\n+$/g, "");

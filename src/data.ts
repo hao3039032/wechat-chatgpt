@@ -26,12 +26,8 @@ class DB {
     }
     const newUser: User = {
       username: username,
-      chatMessage: [
-        {
-          role: ChatCompletionRequestMessageRoleEnum.System,
-          content: "You are a helpful assistant."
-        }
-      ],
+      chatMessage: initState.concat(),
+      lastCommunicateTime: Date.now(),
     };
     DB.data.push(newUser);
     return newUser;
@@ -75,10 +71,15 @@ class DB {
   public addUserMessage(username: string, message: string): void {
     const user = this.getUserByUsername(username);
     if (user) {
+      let now = Date.now()
+      if (now - user.lastCommunicateTime >= 28800000) {
+        user.chatMessage = initState.concat()
+      }
       user.chatMessage.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         content: message,
       });
+      user.lastCommunicateTime = now
     }
   }
 
@@ -104,12 +105,7 @@ class DB {
   public clearHistory(username: string): void {
     const user = this.getUserByUsername(username);
     if (user) {
-      user.chatMessage = [
-        {
-          role: ChatCompletionRequestMessageRoleEnum.System,
-          content: "You are a helpful assistant."
-        }
-      ];
+      user.chatMessage = initState.concat()
     }
   }
 

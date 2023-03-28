@@ -14,4 +14,5 @@ export interface IConfig {
 export interface User {
   username: string,
   chatMessage: Array<ChatCompletionRequestMessage>,
+  lastCommunicateTime: number
 }
