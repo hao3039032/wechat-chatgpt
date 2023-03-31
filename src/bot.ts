@@ -284,8 +284,8 @@ export class ChatGPTBot {
         let url = await dalle(talker.name(), imgContent) as string;
         const fileBox = FileBox.fromUrl(url)
         message.say(fileBox)
-      }else{
-        let url = await dalle(await room.topic(), imgContent) as string;
+      } else if (await message.mentionSelf()){
+        let url = await dalle(room.id, imgContent) as string;
         const fileBox = FileBox.fromUrl(url)
         message.say(fileBox)
       }
