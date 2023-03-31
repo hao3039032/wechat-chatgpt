@@ -221,7 +221,8 @@ export class ChatGPTBot {
     text: string,
     room: RoomInterface
   ) {
-    const gptMessage = await this.getGPTMessage(await room.topic(),text);
+    room.id
+    const gptMessage = await this.getGPTMessage(room.id, text);
     const result = `@${talker.name()} ${text}\n\n------\n ${gptMessage}`;
     await this.trySay(room, result);
   }
@@ -249,8 +250,20 @@ export class ChatGPTBot {
         return;
       });
       // Whisper
-      whisper("",fileName).then((text) => {
-        message.say(text);
+      whisper("",fileName).then(async (text) => {
+        // message.say(text);
+        if (this.triggerGPTMessage(rawText, privateChat)) {
+          const text = this.cleanMessage(rawText, privateChat);
+          if (privateChat) {
+            return await this.onPrivateMessage(talker, text);
+          } else{
+            if (!this.disableGroupMessage){
+              return await this.onGroupMessage(talker, text, room);
+            } else {
+              return;
+            }
+          }
+        }
       })
       return;
     }

@@ -9,6 +9,7 @@ import fs from "fs";
 import { config } from "./config.js";
 
 const configuration = new Configuration({
+  organization: process.env.OPENAI_ORGANIZATION,
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
@@ -25,7 +26,9 @@ async function chatgpt(username:string,message: string): Promise<string> {
   const response = await openai.createChatCompletion({
     model: config.model,
     messages: messages,
-    temperature: config.temperature
+    temperature: config.temperature,
+    top_p: config.top_p,
+    user: username
   }).then((res) => res.data).catch((err) => console.log(err));
   if (response) {
     return (response.choices[0].message as any).content.replace(/^\n+|\n+$/g, "");
