@@ -221,7 +221,6 @@ export class ChatGPTBot {
     text: string,
     room: RoomInterface
   ) {
-    room.id
     const gptMessage = await this.getGPTMessage(room.id, text);
     const result = `@${talker.name()} ${text}\n\n------\n ${gptMessage}`;
     await this.trySay(room, result);
@@ -257,7 +256,7 @@ export class ChatGPTBot {
           if (privateChat) {
             return await this.onPrivateMessage(talker, text);
           } else{
-            if (!this.disableGroupMessage){
+            if (!this.disableGroupMessage && await message.mentionSelf()){
               return await this.onGroupMessage(talker, text, room);
             } else {
               return;
@@ -297,7 +296,7 @@ export class ChatGPTBot {
       if (privateChat) {
         return await this.onPrivateMessage(talker, text);
       } else{
-        if (!this.disableGroupMessage){
+        if (!this.disableGroupMessage && await message.mentionSelf()){
           return await this.onGroupMessage(talker, text, room);
         } else {
           return;
